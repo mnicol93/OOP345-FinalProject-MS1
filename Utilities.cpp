@@ -23,20 +23,27 @@ namespace sdds {
 
     std::string Utilities::extractToken(const std::string& str, size_t& next_pos, bool& more)
     {
-        if (str[next_pos] == m_delimiter)
-            throw("Delimiter found at new position.");
-        std::string temp = str;
-        temp = str.substr(next_pos, str.find_first_of(m_delimiter));
+        std::string temp;
 
-        if (str != "") {
-            next_pos = str.find_first_of(m_delimiter);
-            more = true;
+        if (str[next_pos] == m_delimiter) {
+            more = false;
+            throw("Delimiter found at new position.");
+        }
+        size_t startPos = next_pos;
+        next_pos = str.find(m_delimiter, startPos);
+
+        if (next_pos == std::string::npos) {
+            temp = str.substr(startPos);
+            more = false;
+            next_pos = 0;
         }
         else {
-            more = false;
+            more = true;
+            temp = str.substr(startPos, next_pos - startPos);
+            next_pos++;
         }
-        if (m_widthField < temp.length())
-            m_widthField = temp.length();
+        if (m_widthField < temp.length()) m_widthField = temp.length();
+
         return temp;
     }
 
